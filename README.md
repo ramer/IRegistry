@@ -29,3 +29,23 @@ clsSample deserializedobject = (clsSample)IRegistrySerializer.Deserialize(typeof
 
 * **obj** - The object to store in registry
 * **regkey** - The RegistryKey, which determine registry path
+
+### Attributes:
+
+* **RegistrySerializer(bool Ignorable, string Name)** - The property attribute allow you to ignore or rename your custom class property, while serializing
+
+### Attributes usage:
+#### C#
+
+```C#
+
+public class clsSample
+{
+    [RegistrySerializer(false, "SamplePropertyStringAlias")]
+    public string SamplePropertyString
+    {
+        get { return _SamplePropertyString; }
+        set { _SamplePropertyString = value; }
+    }
+}
+```
