@@ -15,6 +15,7 @@ namespace IRegisty
         
         public static void Serialize(object obj, RegistryKey regkey)
         {
+            if (obj == null) return;
 
             Type T = obj.GetType();
             
