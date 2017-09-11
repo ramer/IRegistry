@@ -32,7 +32,12 @@ clsSample deserializedobject = (clsSample)IRegistrySerializer.Deserialize(typeof
 
 ### Attributes:
 
-* **RegistrySerializer(bool Ignorable, string Name)** - The property attribute allow you to ignore or rename your custom class property, while serializing
+* **RegistrySerializerIgnorable(bool Ignorable)** - The property attribute allow you to ignore your custom class property
+* **RegistrySerializerAlias(string Alias)** - The property attribute allow you to rename your custom class property
+
+* **RegistrySerializerBeforeSerialize(bool BeforeSerialize)** - The method attribute allow you to invoke method before serialize
+* **RegistrySerializerAfterSerialize(bool AfterSerialize)** - The method attribute allow you to invoke method after serialize
+* **RegistrySerializerAfterDeserialize(bool AfterDeserialize)** - The method attribute allow you to invoke method after deserialize
 
 ### Attributes usage:
 #### C#
@@ -41,11 +46,17 @@ clsSample deserializedobject = (clsSample)IRegistrySerializer.Deserialize(typeof
 
 public class clsSample
 {
-    [RegistrySerializer(false, "SamplePropertyStringAlias")]
+    [RegistrySerializerAlias("SamplePropertyStringAlias")]
     public string SamplePropertyString
     {
         get { return _SamplePropertyString; }
         set { _SamplePropertyString = value; }
+    }
+    
+    [RegistrySerializerBeforeSerialize(true)]
+    public void MethodBeforeSerialize ()
+    {
+        Console.Write("Method invoked before serialize ... ");
     }
 }
 ```
