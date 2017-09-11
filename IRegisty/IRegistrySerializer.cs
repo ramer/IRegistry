@@ -81,6 +81,15 @@ namespace IRegisty
             }
             else if (T.IsClass)
             {
+
+                foreach (MethodInfo meth in T.GetMethods())
+                {
+                    if (meth.GetCustomAttribute<RegistrySerializerBeforeSerializeAttribute>() != null && meth.GetCustomAttribute<RegistrySerializerBeforeSerializeAttribute>().BeforeSerialize)
+                    {
+                        meth.Invoke(obj, null);
+                    }
+                }
+
                 foreach (PropertyInfo prop in T.GetProperties())
                 {
 
@@ -88,13 +97,14 @@ namespace IRegisty
 
                     string keyname = prop.Name;
 
-                    RegistrySerializerAttribute attr = prop.GetCustomAttribute<RegistrySerializerAttribute>();
-                    if (attr != null)
+                    if (prop.GetCustomAttribute<RegistrySerializerIgnorableAttribute>() != null && prop.GetCustomAttribute<RegistrySerializerIgnorableAttribute>().Ignorable)
                     {
-                        if (attr.Ignorable)
-                            continue;
-                        if (!string.IsNullOrEmpty(attr.Name))
-                            keyname = attr.Name;
+                        continue;
+                    }
+
+                    if (prop.GetCustomAttribute<RegistrySerializerAliasAttribute>() != null && !string.IsNullOrEmpty(prop.GetCustomAttribute<RegistrySerializerAliasAttribute>().Alias))
+                    {
+                        keyname = prop.GetCustomAttribute<RegistrySerializerAliasAttribute>().Alias;
                     }
 
                     RegistryKey childkey = regkey.CreateSubKey(keyname);
@@ -103,7 +113,15 @@ namespace IRegisty
                     Serialize(value, childkey);
 
                 }
-                
+
+                foreach (MethodInfo meth in T.GetMethods())
+                {
+                    if (meth.GetCustomAttribute<RegistrySerializerAfterSerializeAttribute>() != null && meth.GetCustomAttribute<RegistrySerializerAfterSerializeAttribute>().AfterSerialize)
+                    {
+                        meth.Invoke(obj, null);
+                    }
+                }
+
             }
             else
             {
@@ -180,22 +198,29 @@ namespace IRegisty
 
                 foreach (PropertyInfo prop in T.GetProperties())
                 {
-                    if (!prop.CanWrite)
-                        continue;
+                    if (!prop.CanWrite) continue;
 
                     string keyname = prop.Name;
 
-                    RegistrySerializerAttribute attr = prop.GetCustomAttribute<RegistrySerializerAttribute>();
-                    if (attr != null)
+                    if (prop.GetCustomAttribute<RegistrySerializerIgnorableAttribute>() != null && prop.GetCustomAttribute<RegistrySerializerIgnorableAttribute>().Ignorable) { 
+                        continue;
+                    }
+
+                    if (prop.GetCustomAttribute<RegistrySerializerAliasAttribute>() != null && !string.IsNullOrEmpty(prop.GetCustomAttribute<RegistrySerializerAliasAttribute>().Alias))
                     {
-                        if (attr.Ignorable)
-                            continue;
-                        if (!string.IsNullOrEmpty(attr.Name))
-                            keyname = attr.Name;
+                        keyname = prop.GetCustomAttribute<RegistrySerializerAliasAttribute>().Alias;
                     }
 
                     RegistryKey childkey = regkey.OpenSubKey(keyname);
                     prop.SetValue(cls, Deserialize(prop.PropertyType, childkey));
+                }
+
+                foreach (MethodInfo meth in T.GetMethods())
+                {
+                    if (meth.GetCustomAttribute<RegistrySerializerAfterDeserializeAttribute>() != null && meth.GetCustomAttribute<RegistrySerializerAfterDeserializeAttribute>().AfterDeserialize)
+                    {
+                        meth.Invoke(cls, null);
+                    }
                 }
 
                 return cls;
@@ -227,19 +252,10 @@ namespace IRegisty
     #region "Assembly Attributes"
 
     [AttributeUsage(AttributeTargets.Property)]
-    public class RegistrySerializerAttribute : Attribute
+    public class RegistrySerializerIgnorableAttribute : Attribute
     {
-
         private bool _ignorable;
-
-        private string _name;
-        public RegistrySerializerAttribute(bool Ignorable, string Name)
-        {
-            _ignorable = Ignorable;
-            _name = Name;
-        }
-
-        public RegistrySerializerAttribute(bool Ignorable)
+        public RegistrySerializerIgnorableAttribute(bool Ignorable)
         {
             _ignorable = Ignorable;
         }
@@ -249,14 +265,72 @@ namespace IRegisty
             get { return _ignorable; }
             set { _ignorable = value; }
         }
-
-        public string Name
-        {
-            get { return _name; }
-            set { _name = value; }
-        }
-
     }
 
+    [AttributeUsage(AttributeTargets.Property)]
+    public class RegistrySerializerAliasAttribute : Attribute
+    {
+        private string _alias;
+        public RegistrySerializerAliasAttribute(string Alias)
+        {
+            _alias = Alias;
+        }
+
+        public string Alias
+        {
+            get { return _alias; }
+            set { _alias = value; }
+        }
+    }
+
+
+    [AttributeUsage(AttributeTargets.Method)]
+    public class RegistrySerializerBeforeSerializeAttribute : Attribute
+    {
+        private bool _beforeserialize;
+        public RegistrySerializerBeforeSerializeAttribute(bool BeforeSerialize)
+        {
+            _beforeserialize = BeforeSerialize;
+        }
+
+        public bool BeforeSerialize
+        {
+            get { return _beforeserialize; }
+            set { _beforeserialize = value; }
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Method)]
+    public class RegistrySerializerAfterSerializeAttribute : Attribute
+    {
+        private bool _afterserialize;
+        public RegistrySerializerAfterSerializeAttribute(bool AfterSerialize)
+        {
+            _afterserialize = AfterSerialize;
+        }
+
+        public bool AfterSerialize
+        {
+            get { return _afterserialize; }
+            set { _afterserialize = value; }
+        }
+    }
+    
+
+    [AttributeUsage(AttributeTargets.Method)]
+    public class RegistrySerializerAfterDeserializeAttribute : Attribute
+    {
+        private bool _afterdeserialize;
+        public RegistrySerializerAfterDeserializeAttribute(bool AfterDeserialize)
+        {
+            _afterdeserialize = AfterDeserialize;
+        }
+
+        public bool AfterDeserialize
+        {
+            get { return _afterdeserialize; }
+            set { _afterdeserialize = value; }
+        }
+    }
     #endregion
 }

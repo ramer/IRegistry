@@ -28,14 +28,14 @@ namespace IRegistryTest
             _SamplePropertyDictionaryOfInteger = SamplePropertyDictionaryOfInteger;
         }
 
-        [RegistrySerializer(false, "SamplePropertyStringAlias")]
+        [RegistrySerializerAlias("SamplePropertyStringAlias")]
         public string SamplePropertyString
         {
             get { return _SamplePropertyString; }
             set { _SamplePropertyString = value; }
         }
 
-        [RegistrySerializer(false)]
+        [RegistrySerializerIgnorable(false)]
         public int SamplePropertyInteger
         {
             get { return _SamplePropertyInteger; }
@@ -48,14 +48,14 @@ namespace IRegistryTest
             set { _SamplePropertyDate = value; }
         }
 
-        [RegistrySerializer(false, "SamplePropertyArrayOfStringAlias")]
+        [RegistrySerializerAlias("SamplePropertyArrayOfStringAlias")]
         public string[] SamplePropertyArrayOfString
         {
             get { return _SamplePropertyArrayOfString; }
             set { _SamplePropertyArrayOfString = value; }
         }
 
-        [RegistrySerializer(false, "SamplePropertyListOfStringAlias")]
+        [RegistrySerializerAlias("SamplePropertyListOfStringAlias")]
         public List<string> SamplePropertyListOfString
         {
             get { return _SamplePropertyListOfString; }
