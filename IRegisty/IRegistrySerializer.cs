@@ -19,7 +19,13 @@ namespace IRegisty
 
             Type T = obj.GetType();
             
-            if (T.IsPrimitive | T.IsClass & T == typeof(string))
+            if (T == typeof(bool))
+            {
+
+                regkey.SetValue(null, obj);
+
+            }
+            else if (T.IsPrimitive | T.IsClass & T == typeof(string))
             {
 
                 regkey.SetValue(null, obj);
@@ -134,17 +140,22 @@ namespace IRegisty
 
         public static object Deserialize(Type T, RegistryKey regkey)
         {
-            
-            if (T.IsPrimitive | T.IsClass & T == typeof(string))
+            if (T == typeof(bool))
             {
 
-                return regkey.GetValue(null);
-                
+                return Convert.ToBoolean(regkey.GetValue(null));
+
             }
             else if (T == typeof(DateTime))
             {
 
                 return DateTime.FromFileTime(long.Parse(regkey.GetValue(null).ToString()));
+
+            }
+            else if (T.IsPrimitive | T.IsClass & T == typeof(string))
+            {
+
+                return regkey.GetValue(null);
                 
             }
             else if (T.IsArray)

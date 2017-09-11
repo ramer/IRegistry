@@ -11,7 +11,7 @@ namespace IRegistryTest
         {
             RegistryKey reg = Registry.CurrentUser.CreateSubKey(@"Software\RegistrySerializer\Sample");
 
-            clsSample objecttoserialize = new clsSample("Hello World!", 12345, DateTime.Now,
+            clsSample objecttoserialize = new clsSample("Hello World!", 12345, DateTime.Now, true,
                 new string[] {"mno", "pqr", "stu", "vwx"},
                 new List<string> {"abc", "def", "ghi", "jkl"},
                 new Dictionary<string, int> {  {"one", 1}, {"two", 2}, {"three", 3}});

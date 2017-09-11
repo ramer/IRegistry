@@ -10,6 +10,7 @@ namespace IRegistryTest
         private string _SamplePropertyString;
         private int _SamplePropertyInteger;
         private DateTime _SamplePropertyDate;
+        private bool _SamplePropertyBoolean;
         private string[] _SamplePropertyArrayOfString;
         private List<string> _SamplePropertyListOfString = new List<string>();
         private Dictionary<string, int> _SamplePropertyDictionaryOfInteger = new Dictionary<string, int>();
@@ -18,11 +19,12 @@ namespace IRegistryTest
         {
         }
 
-        public clsSample(string SamplePropertyString, int SamplePropertyInteger, DateTime SamplePropertyDate, string[] SamplePropertyArrayOfString, List<string> SamplePropertyListOfString, Dictionary<string, int> SamplePropertyDictionaryOfInteger)
+        public clsSample(string SamplePropertyString, int SamplePropertyInteger, DateTime SamplePropertyDate, bool SamplePropertyBoolean, string[] SamplePropertyArrayOfString, List<string> SamplePropertyListOfString, Dictionary<string, int> SamplePropertyDictionaryOfInteger)
         {
             _SamplePropertyString = SamplePropertyString;
             _SamplePropertyInteger = SamplePropertyInteger;
             _SamplePropertyDate = SamplePropertyDate;
+            _SamplePropertyBoolean = SamplePropertyBoolean;
             _SamplePropertyArrayOfString = SamplePropertyArrayOfString;
             _SamplePropertyListOfString = SamplePropertyListOfString;
             _SamplePropertyDictionaryOfInteger = SamplePropertyDictionaryOfInteger;
@@ -46,6 +48,12 @@ namespace IRegistryTest
         {
             get { return _SamplePropertyDate; }
             set { _SamplePropertyDate = value; }
+        }
+
+        public bool SamplePropertyBoolean
+        {
+            get { return _SamplePropertyBoolean; }
+            set { _SamplePropertyBoolean = value; }
         }
 
         [RegistrySerializerAlias("SamplePropertyArrayOfStringAlias")]
