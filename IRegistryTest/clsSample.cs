@@ -67,5 +67,11 @@ namespace IRegistryTest
             get { return _SamplePropertyDictionaryOfInteger; }
             set { _SamplePropertyDictionaryOfInteger = value; }
         }
+
+        [RegistrySerializerBeforeSerialize(true)]
+        public void MyMethod ()
+        {
+            Console.Write("Method invoked before serialize ... ");
+        }
     }
 }
