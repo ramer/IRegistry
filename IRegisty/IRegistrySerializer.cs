@@ -140,6 +140,8 @@ namespace IRegisty
 
         public static object Deserialize(Type T, RegistryKey regkey)
         {
+            if (regkey == null) { return null; }
+
             if (T == typeof(bool))
             {
 
